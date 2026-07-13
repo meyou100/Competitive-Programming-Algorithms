@@ -11,7 +11,7 @@ class Trie:
             self.exit_link = 0 #points to the nearest node representing the end of a word that is a proper suffix
 
         def __repr__(self):
-            return self.parent_ch + str(self.parent) + str(self.next) + str(self.exit_link) + str(self.suf_link)
+            return str(self.next) + str(self.exit_link) + str(self.suf_link)
 
     __slots__ = 'size', 'vertices', 'mapping'
     def __init__(self, size=26, mapping=lambda a: ord(a) - 97):
@@ -42,7 +42,7 @@ class Trie:
                     vertex_obj.next[ind] = next_suf_ind
                 else:
                     next_vertex_obj.suf_link = next_suf_ind
-                    next_vertex_obj.exit_link = next_suf_ind if next_suf_obj.end else next_suf_obj.exit_link
+                    next_vertex_obj.exit_link = next_vertex_ind if next_vertex_obj.end else next_suf_obj.exit_link
                     q.append(next_vertex_ind)
 
     def _index_obj(self, ind: int):
