@@ -1,4 +1,6 @@
-def symmetric_sum(arr, k):
+from typing import List
+
+def symmetric_sum(arr: List[int], k: int) -> List[int]:
     s = [0] * (k + 1) #represents the kth sym sum
     s[0] = 1 #base case
 
