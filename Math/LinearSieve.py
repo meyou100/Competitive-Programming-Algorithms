@@ -1,6 +1,8 @@
+from typing import List, Tuple
+
 #Implements the linear Sieve of Eratosthenes for finding all primes less than or equal to n
 #Note: O(n) but generally slower than the normal sieve
-def LinearSieve(n: int):
+def LinearSieve(n: int) -> Tuple[List[int], List[bool]]:
     composite = [False] * (n + 1)
     prime = []
     for i in range(2, n + 1):

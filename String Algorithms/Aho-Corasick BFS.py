@@ -1,37 +1,38 @@
 #persistent array
 from collections import deque
+from typing import Callable, Tuple
 
 class Trie:
     class Node:
-        __slots__ = 'parent', 'end', 'exit_link', 'suf_link', 'next', 'parent_ch'
-        def __init__(self, size=26):
+        __slots__ = 'end', 'exit_link', 'suf_link', 'next'
+        def __init__(self, size: int=26) -> None:
             self.next = [0] * size
             self.end = False
             self.suf_link = 0
             self.exit_link = 0 #points to the nearest node representing the end of a word that is a suffix
 
-        def __repr__(self):
+        def __repr__(self) -> str:
             return str(self.next) + str(self.exit_link) + str(self.suf_link)
 
     __slots__ = 'size', 'vertices', 'mapping'
-    def __init__(self, size=26, mapping=lambda a: ord(a) - 97):
+    def __init__(self, size: int=26, mapping: Callable[[str], int]=lambda a: ord(a) - 97) -> None:
         self.size = size
         self.mapping = mapping #function to map characters to their proper index in the trie
         self.vertices = [self.Node(size), self.Node(size)]
         self.vertices[0].next = [1] * size
 
-    def add_string(self, s: str):
+    def add_string(self, s: str) -> None:
         #adds a string to the trie
-        cur_vertex = 1 #start at the root
+        cur_vertex = self.vertices[1] #start at the root
         for ch in s:
             ind = self.mapping(ch) #compute the index of Node.next that this character would be in
-            if not self.vertices[cur_vertex].next[ind]:
-                self.vertices[cur_vertex].next[ind] = len(self.vertices)
+            if not cur_vertex.next[ind]:
+                cur_vertex.next[ind] = len(self.vertices)
                 self.vertices.append(self.Node(self.size))
-            cur_vertex = self.vertices[cur_vertex].next[ind]
-        self.vertices[cur_vertex].end = True
+            cur_vertex = self.vertices[cur_vertex.next[ind]]
+        cur_vertex.end = True
 
-    def bfs(self):
+    def bfs(self) -> None:
         q = deque([1])
         while q:
             vertex_ind, vertex_obj = self._index_obj(q.popleft())
@@ -45,5 +46,5 @@ class Trie:
                     next_vertex_obj.exit_link = next_vertex_ind if next_vertex_obj.end else next_suf_obj.exit_link
                     q.append(next_vertex_ind)
 
-    def _index_obj(self, ind: int):
+    def _index_obj(self, ind: int) -> Tuple[int, Node]:
         return ind, self.vertices[ind]

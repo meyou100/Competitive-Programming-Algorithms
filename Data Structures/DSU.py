@@ -1,11 +1,11 @@
 class DSU:
-    def __init__(self, n):
+    def __init__(self, n: int) -> None:
         self.nodes = list(range(n))
         self.size = [1] * n
         self.num_sets = n
 
     #Implementation using recursion is slower
-    def find(self, a):
+    def find(self, a: int) -> int:
         acopy = a
         while a != self.nodes[a]:
             a = self.nodes[a]
@@ -13,7 +13,7 @@ class DSU:
             self.nodes[acopy], acopy = a, self.nodes[acopy]
         return a
 
-    def union(self, a, b):
+    def union(self, a:int , b: int) -> None:
         a, b = self.find(a), self.find(b)
         if a != b:
             self.num_sets -= 1
@@ -24,8 +24,8 @@ class DSU:
                 self.nodes[a] = b
                 self.size[b] += self.size[a]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.num_sets
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.nodes)
