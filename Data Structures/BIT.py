@@ -1,19 +1,21 @@
+from typing import List
+
 class BIT:
-    def __init__(self, x):
+    def __init__(self, x: List[int]) -> None:
         """transform list into BIT"""
-        self.bit = x
+        self.bit = x[:]
         for i in range(len(x)):
             j = i | (i + 1)
             if j < len(x):
-                x[j] += x[i]
+                self.bit[j] += self.bit[i]
 
-    def update(self, idx, x):
+    def update(self, idx: int, x: int) -> None:
         """updates bit[idx] += x"""
         while idx < len(self.bit):
             self.bit[idx] += x
             idx |= idx + 1
 
-    def query(self, end):
+    def query(self, end: int) -> int:
         """calc sum(bit[:end])"""
         x = 0
         while end:
@@ -21,7 +23,7 @@ class BIT:
             end &= end - 1
         return x
 
-    def findkth(self, k):
+    def findkth(self, k: int) -> int:
         """Find largest idx such that sum(bit[:idx]) <= k"""
         idx = -1
         for d in reversed(range(len(self.bit).bit_length())):
