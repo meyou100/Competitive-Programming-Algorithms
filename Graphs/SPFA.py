@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 #Implements the shortest path faster algorithm that can deal with negative edge weights and find a negative cycle
 #Note: generally faster than Bellman-Ford but slower in the worst case (negative cycles, etc.) due to high constant factor
-def SPFA(adj: List[List[Tuple[int, int]]], start: int) -> bool | List[int | float]:
+def SPFA(adj: List[List[Tuple[int, int] | List[int]]], start: int) -> bool | List[int | float]:
     q = deque([start])
     dist = [float('inf')] * len(adj) #holds the min distance from start to any node
     inqueue = [False] * len(adj) #prevents adding a node that is already in the queue
