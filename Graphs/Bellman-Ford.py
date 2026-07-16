@@ -17,7 +17,6 @@ def BellmanFord(edges: List[Tuple[int, int, int] | List[int]], start: int, num_n
                 b = True
 
         if not b:
-            break
+            return dist
     else:
         return False #negative cycle
-    return dist
