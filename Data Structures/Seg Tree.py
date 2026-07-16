@@ -1,5 +1,5 @@
 class SegmentTree:
-    def __init__(self, data, default=0, func=max):
+    def __init__(self, data, default=0, func=max) -> None:
         """initialize the lazy segment tree with data"""
         self._default = default
         self._func = func
@@ -13,10 +13,10 @@ class SegmentTree:
         for i in reversed(range(_size)):
             self.data[i] = func(self.data[i + i], self.data[i + i + 1])
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self._len
 
-    def _push(self, idx):
+    def _push(self, idx: int) -> None:
         """push query on idx to its children"""
         # Let the children know of the queries
         q, self._lazy[idx] = self._lazy[idx], 0
@@ -26,19 +26,19 @@ class SegmentTree:
         self.data[2 * idx] += q
         self.data[2 * idx + 1] += q
 
-    def _update(self, idx):
+    def _update(self, idx: int) -> None:
         """updates the node idx to know of all queries applied to it via its ancestors"""
         for i in reversed(range(1, idx.bit_length())):
             self._push(idx >> i)
 
-    def _build(self, idx):
+    def _build(self, idx: int) -> None:
         """make the changes to idx be known to its ancestors"""
         idx >>= 1
         while idx:
             self.data[idx] = self._func(self.data[2 * idx], self.data[2 * idx + 1]) + self._lazy[idx]
             idx >>= 1
 
-    def add(self, start, stop, value):
+    def add(self, start: int, stop: int, value) -> None:
         """lazily add value to [start, stop)"""
         start = start_copy = start + self._size
         stop = stop_copy = stop + self._size
@@ -79,5 +79,5 @@ class SegmentTree:
             stop >>= 1
         return res
 
-    def __repr__(self):
-        return "LazySegmentTree({0})".format(self.data)
+    def __repr__(self) -> str:
+        return f"LazySegmentTree({self.data})"
