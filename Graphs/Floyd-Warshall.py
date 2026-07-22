@@ -1,14 +1,14 @@
-from typing import List
+from typing import List, Optional
 
 #Implements the Floyd-Warshall Algorithm for finding the shortest path between any 2 nodes
-#Notes: modifies in-place, accepts an adjacency matrix as an argument, fails if there's a negative cycle
+#Notes: modifies in-place, accepts an adjacency matrix as an argument, needs check_negative_cycle to handle negative cycles
 #If p=True, it will return a 2D array representing the last vertex that improved the distance between nodes which is used to build the shortest path
-def FloydWarshall(dist: List[List[int | float]], p: bool=False) -> None | List[List[int]]:
+def FloydWarshall(dist: List[List[int | float]], p: bool=False) -> Optional[List[List[int]]]:
     #dist must be an adjacency matrix for the graph, float('inf') for no edge, 0 nodes mapping to themselves, positive number for edge weights
     n = len(dist)
     if p:
         inbetween = [[i if dist[i][j] != float('inf') else -1 for j in range(n)] for i in range(n)]
-        print(inbetween)
+
     for k in range(n): #middle node
         for i in range(n):
             for j in range(n):
