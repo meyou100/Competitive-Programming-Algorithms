@@ -2,6 +2,7 @@ from typing import List, Tuple
 import heapq
 
 #Implements Dijkstra's algorithm for finding the shortest path between a starting node to all other nodes
+#Fails if there are negative weights
 def Dijkstra(adj: List[List[Tuple[int, int] | List[int]]], start: int) -> List[int | float]:  #adjacency list, and start node
     n = len(adj)
     dist = [float('inf')] * n
