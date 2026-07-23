@@ -1,7 +1,7 @@
 from typing import List, Any
-import random
+import random, math
 
-def reservoir_sampling(stream: List[Any], k: int, queries: List[int]) -> List[Any]:
+def algorithm_R(stream: List[Any], k: int, queries: List[int]) -> List[Any]:
     result = [] #will hold the result of the queries
 
     reservoir = []
@@ -21,3 +21,14 @@ def reservoir_sampling(stream: List[Any], k: int, queries: List[int]) -> List[An
                 qi += 1
 
     return result
+
+def algorithm_L(stream: List[Any], k: int, queries: List[int]) -> List[Any]:
+    result = []
+
+    reservoir = []
+    i = 0
+    qi = 0 #index in the queries list
+    while i < k:
+        reservoir.append(stream[i])
+
+    _max =
