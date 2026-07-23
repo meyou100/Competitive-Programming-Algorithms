@@ -42,6 +42,7 @@ def algorithm_L(stream: List[Any], k: int, queries: List[int]) -> List[Any]:
     while i < k: #initializing the reservoir
         reservoir[i] = stream[i]
         i += 1
+    i -= 1 #i must equal k - 1 for the while loop to work
     while qi < len(queries) and queries[qi] + 1 < k: #answering the queries that happen before the reservoir is fully initialized
         qi += 1
 
@@ -57,5 +58,8 @@ def algorithm_L(stream: List[Any], k: int, queries: List[int]) -> List[Any]:
 
         print(i, reservoir, qi)
     return result
+print(algorithm_L(list(range(6)), 5, queries=[0,1,2,3,4,5]))
+
+
+
 print(algorithm_R(list(range(1000)), k=5, queries=[0,1,2,3,4,5,999]))
-print(algorithm_L(list(range(1000)), 5, queries=[0,1,2,3,4,5,999]))
