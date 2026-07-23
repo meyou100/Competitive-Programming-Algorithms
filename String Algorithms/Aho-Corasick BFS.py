@@ -2,6 +2,7 @@
 from collections import deque
 from typing import Callable, Tuple
 
+#when using this implementation start at node 1
 class Trie:
     class Node:
         __slots__ = 'end', 'exit_link', 'suf_link', 'next'
