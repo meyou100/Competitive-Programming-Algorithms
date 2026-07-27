@@ -1,4 +1,4 @@
-#persistent array
+#persistent array, implement go methods
 from collections import deque
 from typing import Callable, Tuple
 

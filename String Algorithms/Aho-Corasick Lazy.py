@@ -1,5 +1,6 @@
 from typing import Callable
-
+import sys
+sys.setrecurionlimit(int(1e8)) #temporary unitl recursion is implemented
 #persistent array, iterative instead of recursive
 class Trie:
     class Node:
