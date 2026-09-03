@@ -2,11 +2,12 @@ import operator
 from typing import List, Callable
 
 class BIT:
-    def __init__(self, x: List[int], f: Callable[[int, int], int] = operator.add, g: Callable[[int, int], int] = operator.sub) -> None:
+    def __init__(self, x: List[int], f: Callable[[int, int], int]=operator.add, g: Callable[[int, int], int]=operator.sub, identity: int=0) -> None:
         """transform list into BIT"""
         self.bit = x[:]
         self.f = f #group operation
         self.g = g #inverse operation
+        self.identity = identity #identity in the group
         for i in range(len(x)):
             j = i | (i + 1) #gets the parent of element i
             if j < len(x):
@@ -20,7 +21,7 @@ class BIT:
 
     def _prefix(self, end: int) -> int:
         """calc f on the range [0, end)"""
-        x = 0
+        x = self.identity
         while end:
             x = self.f(x, self.bit[end - 1])
             end &= end - 1 #gets the next block for calculating the query
