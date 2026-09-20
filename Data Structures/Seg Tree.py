@@ -58,7 +58,7 @@ class SegmentTree:
         self._build(start_copy)
         self._build(stop_copy - 1)
 
-    def query(self, start, stop, default=0):
+    def query(self, start, stop):
         """func of data[start, stop)"""
         start += self._size
         stop += self._size
@@ -67,7 +67,7 @@ class SegmentTree:
         self._update(start)
         self._update(stop - 1)
 
-        res = default
+        res = self._default
         while start < stop:
             if start & 1:
                 res = self._func(res, self.data[start])
