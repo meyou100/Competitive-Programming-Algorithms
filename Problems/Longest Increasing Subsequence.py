@@ -40,6 +40,9 @@ def LIS_dp(arr: List[int]) -> List[int]:
 
 def LIS_arr(arr: List[int]) -> List[int]:
     """Returns a longest strictly increasing subsequence of arr"""
+    if not arr:
+        return []
+
     seq = []
     prev = [-1] * len(arr) #previous element to element i in the subseq
 
@@ -61,22 +64,44 @@ def LIS_arr(arr: List[int]) -> List[int]:
     return out
 
 
-def LIS_count(arr: List[int]) -> int:
-    """Returns the number of longest strictly increasing subsequences of arr"""
+def LIS_count(arr: List[int]) -> List[float | int]:
+    """Returns the length and number of longest strictly increasing subsequences of arr"""
+    if not arr:
+        return [0, 1]
+
     class BIT:
         def __init__(self, n: int) -> None:
             self.bit = [[0, 0] for _ in range(n)]
 
-        def update(self, idx: int, x: int) -> None:
+        def update(self, idx: int, x: int, count: int) -> None:
             """updates the element at idx by x"""
             while idx < len(self.bit):
-                self.bit[idx] = max(self.bit[idx], x)
+                if self.bit[idx][0] < x:
+                    self.bit[idx] = [x, count]
+                elif self.bit[idx][0] == x:
+                    self.bit[idx][1] += count
                 idx |= idx + 1  # gets the parent of element i
 
-        def query(self, end: int) -> int:
+        def query(self, end: int) -> List[float | int]:
             """calc f on the range [0, end)"""
-            x = [float('-inf'), 0]
+            x = [0, 1]
             while end:
-                x = max(x, self.bit[end - 1])
+                if self.bit[end - 1][0] > x[0]:
+                    x = self.bit[end - 1][:]
+                elif self.bit[end - 1][0] == x[0]:
+                    x[1] += self.bit[end - 1][1]
                 end &= end - 1  # gets the next block for calculating the query
             return x
+
+    b = BIT(max(arr)) #assumes all values are positive
+    for i in range(len(arr)):
+        t = b.query(arr[i] - 1)
+        t[0] += 1
+        b.update(arr[i] - 1, t[0], t[1])
+
+    return b.query(max(arr))
+
+print(LIS_count([3,1]))
+print(LIS_count([2,1,1,1,1,1]))
+print(LIS_count([1,3,5,7,2,4,6]))
+print(LIS_count([]))
