@@ -100,8 +100,3 @@ def LIS_count(arr: List[int]) -> List[float | int]:
         b.update(arr[i] - 1, t[0], t[1])
 
     return b.query(max(arr))
-
-print(LIS_count([3,1]))
-print(LIS_count([2,1,1,1,1,1]))
-print(LIS_count([1,3,5,7,2,4,6]))
-print(LIS_count([]))
