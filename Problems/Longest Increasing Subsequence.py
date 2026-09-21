@@ -2,7 +2,8 @@ from typing import List
 import bisect
 
 def LIS(arr: List[int]) -> int:
-    """Returns the length of the longest strictly increasing subsequence of arr"""
+    """Returns the length of the longest strictly increasing subsequence of arr
+    O(nlogn) time O(ans) space"""
     seq = []
 
     for i in range(len(arr)):
@@ -16,7 +17,8 @@ def LIS(arr: List[int]) -> int:
 
 
 def LIS_dp(arr: List[int]) -> List[int]:
-    """Returns the length of the longest strictly increasing subsequence of arr[:i + 1]"""
+    """Returns the length of the longest strictly increasing subsequence of arr[:i + 1]
+    O(nlogn) time O(n) space"""
     seq = []
     prev = [-1] * len(arr) #previous element to element i in the subseq
 
@@ -39,7 +41,8 @@ def LIS_dp(arr: List[int]) -> List[int]:
 
 
 def LIS_arr(arr: List[int]) -> List[int]:
-    """Returns a longest strictly increasing subsequence of arr"""
+    """Returns a longest strictly increasing subsequence of arr
+    O(nlogn) time O(n) space"""
     if not arr:
         return []
 
@@ -65,7 +68,8 @@ def LIS_arr(arr: List[int]) -> List[int]:
 
 
 def LIS_count(arr: List[int]) -> List[float | int]:
-    """Returns the length and number of longest strictly increasing subsequences of arr"""
+    """Returns the length and number of longest strictly increasing subsequences of arr
+    O(nlogn) time O(max(arr)) space"""
     if not arr:
         return [0, 1]
 
@@ -74,7 +78,6 @@ def LIS_count(arr: List[int]) -> List[float | int]:
             self.bit = [[0, 0] for _ in range(n)]
 
         def update(self, idx: int, x: int, count: int) -> None:
-            """updates the element at idx by x"""
             while idx < len(self.bit):
                 if self.bit[idx][0] < x:
                     self.bit[idx] = [x, count]
@@ -83,7 +86,6 @@ def LIS_count(arr: List[int]) -> List[float | int]:
                 idx |= idx + 1  # gets the parent of element i
 
         def query(self, end: int) -> List[float | int]:
-            """calc f on the range [0, end)"""
             x = [0, 1]
             while end:
                 if self.bit[end - 1][0] > x[0]:
