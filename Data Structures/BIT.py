@@ -15,10 +15,14 @@ class BIT:
 
     def update(self, idx: int, x: int) -> None:
         """Updates the element at idx by x
-        Note: doesn't add x to self.bit[idx] if f != operator.add"""
+        Note: doesn't add x to self.bit[idx] if f != operator.add. To add, query then update yourself and set"""
         while idx < len(self.bit):
             self.bit[idx] = self.f(self.bit[idx], x)
             idx |= idx + 1 #gets the parent of element i
+
+    def set(self, idx: int, x: int) -> None:
+        """Sets the element at idx to x"""
+        self.update(idx, self.g(self.query(idx, idx + 1), x))
 
     def _prefix(self, end: int) -> int:
         """Calc f on the range [0, end)"""
