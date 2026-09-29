@@ -38,6 +38,8 @@ class SegTree:
 
     def query(self, left: int, right: int) -> float:
         """Calc func on the range [left, right)"""
+        if left < 0 or right > self.n:
+            raise ValueError("Invalid range")
         left += self.size
         right += self.size - 1
         lres, rres = self.identity, self.identity #compute the left and right side separately so that func doesn't have to be commutative
