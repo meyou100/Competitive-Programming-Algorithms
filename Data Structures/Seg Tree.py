@@ -1,14 +1,15 @@
 from typing import List, Callable
 
 class SegTree:
-    def __init__(self, data: List[float], default: float=float('-inf'), func: Callable[[float, float], float]=max) -> None:
+    def __init__(self, data: List[float], identity: float=float('-inf'), func: Callable[[float, float], float]=max) -> None:
         """Initializes the seg tree with data
         Uses 1-based indexing. 0 has no meaning"""
-        self.default = default
+        self.identity = identity
         self.func = func
+        self.n = len(data)
         self.size = 1 << (len(data) - 1).bit_length() #make the tree size a power of 2
 
-        self.tree = [default] * (2 * self.size)
+        self.tree = [identity] * (2 * self.size)
         self.tree[self.size:self.size + len(data)] = data
 
         for i in range(self.size - 1, 0, -1):
@@ -31,7 +32,7 @@ class SegTree:
 
     def _update(self, idx: int) -> None:
         """Propagates updates through the tree"""
-        while idx > 0:
+        while idx > 1:
             idx >>= 1
             self.tree[idx] = self.func(self.tree[idx * 2], self.tree[idx * 2 + 1])
 
@@ -39,21 +40,20 @@ class SegTree:
         """Calc func on the range [left, right)"""
         left += self.size
         right += self.size - 1
-        out = self.default
+        lres, rres = self.identity, self.identity #compute the left and right side separately so that func doesn't have to be commutative
         while left <= right:
             if left % 2:
-                out = self.func(out, self.tree[left])
+                lres = self.func(lres, self.tree[left])
                 left += 1
             if not right % 2:
-                out = self.func(out, self.tree[right])
+                rres = self.func(rres, self.tree[right])
                 right -= 1
             left >>= 1
             right >>= 1
-        return out
-
+        return self.func(lres, rres)
 
     def __len__(self) -> int:
-        return self.size * 2
+        return self.n
 
     def __repr__(self) -> str:
         return f"SegTree({self.tree})"
