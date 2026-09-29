@@ -1,83 +1,59 @@
-class SegmentTree:
-    def __init__(self, data, default=0, func=max) -> None:
-        """initialize the lazy segment tree with data"""
-        self._default = default
-        self._func = func
+from typing import List, Callable
 
-        self._len = len(data)
-        self._size = _size = 1 << (self._len - 1).bit_length()
-        self._lazy = [0] * (2 * _size)
+class SegTree:
+    def __init__(self, data: List[float], default: float=float('-inf'), func: Callable[[float, float], float]=max) -> None:
+        """Initializes the seg tree with data
+        Uses 1-based indexing. 0 has no meaning"""
+        self.default = default
+        self.func = func
+        self.size = 1 << (len(data) - 1).bit_length() #make the tree size a power of 2
 
-        self.data = [default] * (2 * _size)
-        self.data[_size:_size + self._len] = data
-        for i in reversed(range(_size)):
-            self.data[i] = func(self.data[i + i], self.data[i + i + 1])
+        self.tree = [default] * (2 * self.size)
+        self.tree[self.size:self.size + len(data)] = data
 
-    def __len__(self) -> int:
-        return self._len
+        for i in range(self.size - 1, 0, -1):
+            self.tree[i] = self.func(self.tree[2 * i], self.tree[2 * i + 1])
 
-    def _push(self, idx: int) -> None:
-        """push query on idx to its children"""
-        # Let the children know of the queries
-        q, self._lazy[idx] = self._lazy[idx], 0
+    def update(self, idx: int, val: float, func: Callable[[float, float], float] | None=None) -> None:
+        """Updates val to idx with the specified func"""
+        idx += self.size
+        if func is None:
+            self.tree[idx] = self.func(self.tree[idx], val)
+        else:
+            self.tree[idx] = func(self.tree[idx], val)
+        self._update(idx)
 
-        self._lazy[2 * idx] += q
-        self._lazy[2 * idx + 1] += q
-        self.data[2 * idx] += q
-        self.data[2 * idx + 1] += q
+    def set(self, idx: int, val: float) -> None:
+        """Sets idx to val"""
+        idx += self.size
+        self.tree[idx] = val
+        self._update(idx)
 
     def _update(self, idx: int) -> None:
-        """updates the node idx to know of all queries applied to it via its ancestors"""
-        for i in reversed(range(1, idx.bit_length())):
-            self._push(idx >> i)
-
-    def _build(self, idx: int) -> None:
-        """make the changes to idx be known to its ancestors"""
-        idx >>= 1
-        while idx:
-            self.data[idx] = self._func(self.data[2 * idx], self.data[2 * idx + 1]) + self._lazy[idx]
+        """Propagates updates through the tree"""
+        while idx > 0:
             idx >>= 1
+            self.tree[idx] = self.func(self.tree[idx * 2], self.tree[idx * 2 + 1])
 
-    def add(self, start: int, stop: int, value) -> None:
-        """lazily add value to [start, stop)"""
-        start = start_copy = start + self._size
-        stop = stop_copy = stop + self._size
-        while start < stop:
-            if start & 1:
-                self._lazy[start] += value
-                self.data[start] += value
-                start += 1
-            if stop & 1:
-                stop -= 1
-                self._lazy[stop] += value
-                self.data[stop] += value
-            start >>= 1
-            stop >>= 1
+    def query(self, left: int, right: int) -> float:
+        """Calc func on the range [left, right)"""
+        left += self.size
+        right += self.size - 1
+        out = self.default
+        while left <= right:
+            if left % 2:
+                out = self.func(out, self.tree[left])
+                left += 1
+            if not right % 2:
+                out = self.func(out, self.tree[right])
+                right -= 1
+            left >>= 1
+            right >>= 1
+        return out
 
-        # Tell all nodes above of the updated area of the updates
-        self._build(start_copy)
-        self._build(stop_copy - 1)
 
-    def query(self, start, stop):
-        """func of data[start, stop)"""
-        start += self._size
-        stop += self._size
-
-        # Apply all the lazily stored queries
-        self._update(start)
-        self._update(stop - 1)
-
-        res = self._default
-        while start < stop:
-            if start & 1:
-                res = self._func(res, self.data[start])
-                start += 1
-            if stop & 1:
-                stop -= 1
-                res = self._func(res, self.data[stop])
-            start >>= 1
-            stop >>= 1
-        return res
+    def __len__(self) -> int:
+        return self.size * 2
 
     def __repr__(self) -> str:
-        return f"LazySegmentTree({self.data})"
+        return f"SegTree({self.tree})"
