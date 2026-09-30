@@ -54,6 +54,24 @@ class SegTree:
             right >>= 1
         return self.func(lres, rres)
 
+    def find_first(self, pred: Callable[[float], bool]) -> int:
+        """Finds the first element in the tree such that pred is True for the prefix
+        Ex: query first index where running max >= n
+        Functions have to be monotone like max/min, gcd but not xor"""
+        if not pred(self.tree[1]): #checks that pred is actually true on the entire
+            return -1
+
+        i = 1
+        acc = self.identity
+        while i < self.size:
+            i *= 2 #go to left child
+            nxt = self.func(acc, self.tree[i])
+            if not pred(nxt):
+                acc = nxt
+                i += 1 #go to right child
+
+        return i - self.size
+
     def __len__(self) -> int:
         return self.n
 
