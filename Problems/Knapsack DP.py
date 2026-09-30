@@ -3,30 +3,30 @@ from collections import deque
 
 def knapsack_01(weights: List[int], values: List[int], capacity: int) -> List[int]:
     """Calculates the max sum of elements in values such that the corresponding sum of weights <= capacity
-    Each element can only be used once. Follow the comments for choose weights s.t. sum(weights) <= capacity
+    Each element can only be used once
     O(nW) time and O(W) space"""
-    dp = [0] * (capacity + 1) #make default value False
-    #dp[0] = True
+    dp = [0] * (capacity + 1)
 
-    for i in range(len(values)):
+    for i in range(len(weights)):
         for j in range(capacity, weights[i] - 1, -1):
-            dp[j] = max(dp[j], dp[j - weights[i]] + values[i]) #|= dp[j - weights[i]]
+            dp[j] = max(dp[j], dp[j - weights[i]] + values[i])
 
     return dp
 
-
-def knapsack_complete(weights: List[int], values: List[int], capacity: int) -> List[int]:
+def knapsack_complete(weights: List[int], values: List[int], capacity: int) -> List[float]:
     """Calculates the max sum of elements in values such that the corresponding sum of weights <= capacity
     Each element can be used multiple times
     O(nW) time and O(W) space"""
     dp = [0] * (capacity + 1)
 
-    for i in range(len(values)):
+    for i in range(len(weights)):
+        #unbounded solution
+        if not weights[i] and values[i]:
+            return [float('inf')] * (capacity + 1)
         for j in range(weights[i], capacity + 1):
             dp[j] = max(dp[j], dp[j - weights[i]] + values[i])
 
     return dp
-
 
 def knapsack_mult(weights: List[int], values: List[int], uses: List[int], capacity: int) -> List[int]:
     """Calculates the max sum of elements in values such that the corresponding sum of weights <= capacity
@@ -35,7 +35,7 @@ def knapsack_mult(weights: List[int], values: List[int], uses: List[int], capaci
     dp = [0] * (capacity + 1)
 
     for i in range(len(weights)):
-        if not weights[i]:
+        if not weights[i]: #if weight[i] == 0 then for any capacity we can take all these elements
             for j in range(len(dp)):
                 dp[j] += values[i] * uses[i]
                 continue
@@ -56,9 +56,3 @@ def knapsack_mult(weights: List[int], values: List[int], uses: List[int], capaci
                 dp[div * weights[i] + mod] = dq[0][1] + values[i] * div
 
     return dp
-
-
-def fast_knapsack(weights: List[int], values: List[int], capacity: int) -> int:
-    """Calculates the max sum of elements in values such that the corresponding sum of weights <= capacity
-    Easily adapted to multiple knapsack by duplicating a weight and value pair k times
-    O(n * max(weights)) time O(max(weights)) space"""
