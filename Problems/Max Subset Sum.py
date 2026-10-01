@@ -41,7 +41,7 @@ def subset_multiple(weights: List[int], uses: List[int], capacity: int) -> int:
 
 def subset_fast(weights: List[int], capacity: int) -> int:
     """Calculates the max sum of elements in values such that the corresponding sum of weights <= capacity
-    Easily adapted to multiple knapsack by duplicating a weight and value pair k times
+    weights and capacity must be nonnegative
     O(n * max(weights)) time O(max(weights)) space"""
     ind = cur_sum = 0
     #greedily take the max prefix such that the sum <= capacity
