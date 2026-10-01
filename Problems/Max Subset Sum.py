@@ -19,7 +19,7 @@ def subset_complete(weights: List[int], capacity: int) -> int:
     for weight in weights:
         if not weight:
             continue
-        while weight < capacity:
+        while weight <= capacity:
             bitset |= (bitset << weight) & mask
             weight <<= 1
     return bitset
@@ -43,11 +43,13 @@ def subset_fast(weights: List[int], capacity: int) -> int:
     """Calculates the max sum of elements in values such that the corresponding sum of weights <= capacity
     Easily adapted to multiple knapsack by duplicating a weight and value pair k times
     O(n * max(weights)) time O(max(weights)) space"""
-    ind = cur_sum =0
+    ind = cur_sum = 0
+    #greedily take the max prefix such that the sum <= capacity
     while ind < len(weights) and cur_sum + weights[ind] <= capacity:
         cur_sum += weights[ind]
         ind += 1
 
+    #if all weights were used then we're done
     if ind == len(weights):
         return cur_sum
 
@@ -57,13 +59,16 @@ def subset_fast(weights: List[int], capacity: int) -> int:
 
     for i in range(ind, len(weights)):
         old = window[:]
+        #mark all sums that can be made with weight[i]
         for j in range(m):
             window[j + weights[i]] = max(window[j + weights[i]], old[j])
 
+        #marks all sums that can be made by subtracting a weight[k] from it
         for j in range(2 * m - 1, m, -1):
             for k in range(max(0, old[j]), window[j]):
                 window[j - weights[k]] = max(window[j - weights[k]], k)
 
+    #finds the max sum that can be made from the elements
     ans = capacity
     while window[ans + m - capacity] < 0:
         ans -= 1
