@@ -1,6 +1,6 @@
 from typing import List
 import heapq
-
+from Data_Structures.DSU import *
 
 def kruskal(edges: List[List[int]], nodes: int) -> int:
     """Kruksal's Algorithm for min spanning tree
