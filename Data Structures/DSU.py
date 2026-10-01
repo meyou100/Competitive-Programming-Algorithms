@@ -13,7 +13,7 @@ class DSU:
             self.nodes[acopy], acopy = a, self.nodes[acopy]
         return a
 
-    def union(self, a:int , b: int) -> None:
+    def union(self, a: int , b: int) -> None:
         a, b = self.find(a), self.find(b)
         if a != b:
             self.num_sets -= 1
@@ -23,6 +23,9 @@ class DSU:
             else:
                 self.nodes[a] = b
                 self.size[b] += self.size[a]
+
+    def set_size(self, a: int) -> int:
+        return self.size[self.find(a)]
 
     def __len__(self) -> int:
         return self.num_sets
