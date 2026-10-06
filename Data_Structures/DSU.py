@@ -13,7 +13,8 @@ class DSU:
             self.nodes[acopy], acopy = a, self.nodes[acopy]
         return a
 
-    def union(self, a: int , b: int) -> None:
+    def union(self, a: int , b: int) -> bool:
+        """Unites two sets. Returns true if successful otherwise false"""
         a, b = self.find(a), self.find(b)
         if a != b:
             self.num_sets -= 1
@@ -23,6 +24,8 @@ class DSU:
             else:
                 self.nodes[a] = b
                 self.size[b] += self.size[a]
+            return True
+        return False
 
     def set_size(self, a: int) -> int:
         return self.size[self.find(a)]
