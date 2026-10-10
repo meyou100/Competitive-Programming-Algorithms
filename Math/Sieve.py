@@ -1,13 +1,92 @@
 import math
-from typing import List
+from typing import List, Tuple, Callable
 
-#Implements the Sieve of Eratosthenes for finding all primes less than or equal to n
-#Note: O(nlog(log(n))) but generally faster than linear sieve
-def Sieve(n: int) -> List[bool]:
+def sieve(n: int) -> List[bool]:
+    """Returns a list which indicates whether numbers <= n are prime
+    Generally faster than linear sieve due to constant factors
+    O(nlog(log(n))) time O(n) space"""
     prime = [True] * (n + 1)
     prime[0] = prime[1] = False  #0 and 1 aren't prime
     for i in range(2, math.isqrt(n) + 1):
         if prime[i]:
-            for j in range(2 * i, n + 1, i):
+            for j in range(i * i, n + 1, i):
                 prime[j] = False
     return prime
+
+def linearSieve(n: int) -> Tuple[List[int], List[int]]:
+    """Returns a list of primes up to n and a list containing the smallest prime factor of i for each i
+    Primality can be checked as spf[i] == i
+    Generally slower than normal sieve
+    O(n) time O(n) space"""
+    spf = [0] * (n + 1) #smallest prime factor
+    spf[0] = 2 #smallest prime factor of 0 is 2
+    prime = []
+    for i in range(2, n + 1):
+        if not spf[i]:
+            spf[i] = i
+            prime.append(i)
+        for p in prime:
+            if p > spf[i] or i * p > n:
+                break
+            spf[i * p] = p
+    return prime, spf
+
+def primeFactorization(n: int) -> List[int]:
+    """Returns a list which can be used to compute prime factorizations of i <= n
+    factors[i] is the smallest prime factor of i
+    O(nlog(log(n))) time O(n) space"""
+    spf = [0] * (n + 1) #smallest prime factor
+    spf[0] = 2 #smallest prime factor of 0 is 2
+    for i in range(2, n + 1):
+        if not spf[i]:
+            spf[i] = i
+            for j in range(i * i, n + 1, i):
+                if not spf[j]:
+                    spf[j] = i
+    return spf
+
+def factorize(n: int, spf: List[int]) -> List[int]:
+    """Factorize n into prime factors given the smallest prime factors list
+    O(log(n)) time O(log(n)) space"""
+    factorization = []
+    while n > 1:
+        factorization.append(spf[n])
+        n //= spf[n]
+    return factorization
+
+def calcMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -> int:
+    """Calculates the multiplicative function on n
+    func(a, b) = func(a ^ b)
+    O(log(n)) time O(1) space"""
+    out = 1
+    while n > 1:
+        c = 0
+        p = spf[n]
+        while not n % p:
+            n //= p
+            c += 1
+        out *= func(p, c)
+    return out
+
+def segmentedSieve(left: int, right: int) -> List[bool]:
+    """Calculates the primes in the window from left to right
+    This is useful for reasonable window sizes but large values for left and right
+    O(sqrt(right)log(log(sqrt(right))) + (right - left)log(log(right)))"""
+    rsqrt = math.isqrt(right) + 1
+    prime = [True] * rsqrt
+    primes = [2]
+    #calculate primes up to sqrt(right)
+    for i in range(3, rsqrt, 2):
+        if prime[i]:
+            primes.append(i)
+            for j in range(i * i, rsqrt, i * 2):
+                prime[j] = False
+
+    window = [True] * (right - left + 1)
+    for p in primes:
+        for j in range(max(p, (left - 1) // p + 1) * p, right + 1, p):
+            window[j - left] = False
+    #edge case where 0 and 1 are in the window
+    for x in range(left, min(right + 1, 2)):
+        window[x - left] = False
+    return window
