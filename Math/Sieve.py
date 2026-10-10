@@ -78,7 +78,7 @@ def calcTotalMultFuncLin(n: int, func: Callable[[int, int], int]) -> List[int]:
     primes = []
     f[1] = 1
     for i in range(2, n + 1):
-        if not exponent[i]:
+        if not exponent[i]: #i is prime
             exponent[i] = 1
             power[i] = i
             primes.append(i)
@@ -88,16 +88,16 @@ def calcTotalMultFuncLin(n: int, func: Callable[[int, int], int]) -> List[int]:
             j = p * i
             if j > n:
                 break
-            if i % p:
+            if i % p: #i doesn't share a prime factor with p
                 exponent[j] = 1
                 power[j] = p
                 f[j] = f[i] * f[p]
             else:
                 exponent[j] = exponent[i] + 1
                 power[j] = power[i] * p
-                if power[j] == j:
+                if power[j] == j: #j is a prime power, compute the function on j
                     f[j] = func(p, exponent[j])
-                else:
+                else: #j isn't solely a prime power so the values needed have already been computed
                     f[j] = f[j // power[j]] * f[power[j]]
                 break
     return f
@@ -114,15 +114,16 @@ def calcTotalMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -
     for i in range(2, n + 1):
         p = spf[i]
         j = i // p
-        if j % p: #p doesn't divide j
+        if j % p: #j doesn't share any prime factor with p
             exponent[i] = 1
             power[i] = p
         else:
             exponent[i] = exponent[j] + 1
             power[i] = power[j] * p
-        if power[i] == i:
+
+        if power[i] == i: #i is a prime power, compute the function on i
             f[i] = func(p, exponent[i])
-        else:
+        else: #i isn't a prime power so the values needed have already been computed
             f[i] = f[i // power[i]] * f[power[i]]
     return f
 
