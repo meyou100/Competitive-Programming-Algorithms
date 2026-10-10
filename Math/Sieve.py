@@ -145,4 +145,3 @@ def segmentedSieve(left: int, right: int) -> List[bool]:
     for x in range(left, min(right + 1, 2)):
         window[x - left] = False
     return window
-print(segmentedSieve(int(1e7), int(1e7) + 10))
