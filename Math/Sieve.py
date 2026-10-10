@@ -9,8 +9,7 @@ def sieve(n: int) -> List[bool]:
     prime[0] = prime[1] = False  #0 and 1 aren't prime
     for i in range(2, math.isqrt(n) + 1):
         if prime[i]:
-            for j in range(i * i, n + 1, i):
-                prime[j] = False
+            prime[i*i::i] = [False] * (n // i + 1 - i)
     return prime
 
 def linearSieve(n: int) -> Tuple[List[int], List[int]]:
@@ -31,9 +30,8 @@ def linearSieve(n: int) -> Tuple[List[int], List[int]]:
             spf[i * p] = p
     return prime, spf
 
-def primeFactorization(n: int) -> List[int]:
-    """Returns a list which can be used to compute prime factorizations of i <= n
-    factors[i] is the smallest prime factor of i
+def spfSieve(n: int) -> List[int]:
+    """Returns a list spf where spf[i] is the smallest prime factor of i
     O(nlog(log(n))) time O(n) space"""
     spf = [0] * (n + 1) #smallest prime factor
     spf[0] = 2 #smallest prime factor of 0 is 2
@@ -44,7 +42,6 @@ def primeFactorization(n: int) -> List[int]:
                 if not spf[j]:
                     spf[j] = i
     return spf
-
 def factorize(n: int, spf: List[int]) -> List[int]:
     """Factorize n into prime factors given the smallest prime factors list
     O(log(n)) time O(log(n)) space"""
@@ -57,7 +54,7 @@ def factorize(n: int, spf: List[int]) -> List[int]:
 def calcMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -> int:
     """Calculates the multiplicative function on n
     func(a, b) = func(a ^ b)
-    O(log(n)) time O(1) space"""
+    O(log(n) * f) time O(1) space"""
     out = 1
     while n > 1:
         c = 0 #exponent of the prime factor
@@ -71,7 +68,7 @@ def calcMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -> int
 def calcTotalMultFuncLin(n: int, func: Callable[[int, int], int]) -> List[int]:
     """Calculates the multiplicative function for all numbers <= n
     func(a, b) = func(a ^ b)
-    O(n) time O(n) space"""
+    O(n * f) time O(n) space"""
     f = [0] * (n + 1)
     exponent = [0] * (n + 1) #the largest exponent of spf[i] that divides i
     power = [0] * (n + 1) #spf[i] ** exponent[i]
@@ -106,7 +103,7 @@ def calcTotalMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -
     """Calculates the multiplicative function for all numbers <= n given an spf array
     func(a, b) = func(a ^ b)
     Only fails on the 0 function f(x) = 0
-    O(n) time O(n) space"""
+    O(n * f) time O(n) space"""
     f = [0] * (n + 1)
     exponent = [0] * (n + 1) #the largest exponent of spf[i] that divides i
     power = [0] * (n + 1) #spf[i] ** exponent[i]
