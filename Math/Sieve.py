@@ -33,15 +33,15 @@ def linearSieve(n: int) -> Tuple[List[int], List[int]]:
 def spfSieve(n: int) -> List[int]:
     """Returns a list spf where spf[i] is the smallest prime factor of i
     O(nlog(log(n))) time O(n) space"""
-    spf = [0] * (n + 1) #smallest prime factor
+    spf = list(range(n + 1)) #smallest prime factor
     spf[0] = 2 #smallest prime factor of 0 is 2
-    for i in range(2, n + 1):
-        if not spf[i]:
-            spf[i] = i
+    for i in range(2, math.isqrt(n) + 1):
+        if spf[i] == i:
             for j in range(i * i, n + 1, i):
-                if not spf[j]:
+                if spf[j] == j:
                     spf[j] = i
     return spf
+
 def factorize(n: int, spf: List[int]) -> List[int]:
     """Factorize n into prime factors given the smallest prime factors list
     O(log(n)) time O(log(n)) space"""
@@ -128,21 +128,21 @@ def segmentedSieve(left: int, right: int) -> List[bool]:
     """Calculates the primes in the window from left to right
     This is useful for reasonable window sizes but large values for left and right
     O(sqrt(right)log(log(sqrt(right))) + (right - left)log(log(right)))"""
-    rsqrt = math.isqrt(right) + 1
-    prime = [True] * rsqrt
+    rsqrt = math.isqrt(right)
+    prime = [True] * (rsqrt + 1)
     primes = [2]
     #calculate primes up to sqrt(right)
-    for i in range(3, rsqrt, 2):
+    for i in range(3, rsqrt + 1, 2):
         if prime[i]:
             primes.append(i)
-            for j in range(i * i, rsqrt, i * 2):
-                prime[j] = False
+            prime[i * i::i] = [False] * (rsqrt // i + 1 - i)
 
     window = [True] * (right - left + 1)
     for p in primes:
-        for j in range(max(p, (left - 1) // p + 1) * p, right + 1, p):
-            window[j - left] = False
+        window[max(p, (left - 1) // p + 1) * p - left::p] = [False] * (right // p + 1 - max(p, (left - 1) // p + 1))
+
     #edge case where 0 and 1 are in the window
     for x in range(left, min(right + 1, 2)):
         window[x - left] = False
     return window
+print(segmentedSieve(int(1e7), int(1e7) + 10))
