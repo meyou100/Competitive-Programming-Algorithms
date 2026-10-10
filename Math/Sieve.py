@@ -60,13 +60,71 @@ def calcMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -> int
     O(log(n)) time O(1) space"""
     out = 1
     while n > 1:
-        c = 0
+        c = 0 #exponent of the prime factor
         p = spf[n]
         while not n % p:
             n //= p
             c += 1
         out *= func(p, c)
     return out
+
+def calcTotalMultFuncLin(n: int, func: Callable[[int, int], int]) -> List[int]:
+    """Calculates the multiplicative function for all numbers <= n
+    func(a, b) = func(a ^ b)
+    O(n) time O(n) space"""
+    f = [0] * (n + 1)
+    exponent = [0] * (n + 1) #the largest exponent of spf[i] that divides i
+    power = [0] * (n + 1) #spf[i] ** exponent[i]
+    primes = []
+    f[1] = 1
+    for i in range(2, n + 1):
+        if not exponent[i]:
+            exponent[i] = 1
+            power[i] = i
+            primes.append(i)
+            f[i] = func(i, 1)
+
+        for p in primes:
+            j = p * i
+            if j > n:
+                break
+            if i % p:
+                exponent[j] = 1
+                power[j] = p
+                f[j] = f[i] * f[p]
+            else:
+                exponent[j] = exponent[i] + 1
+                power[j] = power[i] * p
+                if power[j] == j:
+                    f[j] = func(p, exponent[j])
+                else:
+                    f[j] = f[j // power[j]] * f[power[j]]
+                break
+    return f
+
+def calcTotalMultFunc(n: int, spf: List[int], func: Callable[[int, int], int]) -> List[int]:
+    """Calculates the multiplicative function for all numbers <= n given an spf array
+    func(a, b) = func(a ^ b)
+    Only fails on the 0 function f(x) = 0
+    O(n) time O(n) space"""
+    f = [0] * (n + 1)
+    exponent = [0] * (n + 1) #the largest exponent of spf[i] that divides i
+    power = [0] * (n + 1) #spf[i] ** exponent[i]
+    f[1] = 1
+    for i in range(2, n + 1):
+        p = spf[i]
+        j = i // p
+        if j % p: #p doesn't divide j
+            exponent[i] = 1
+            power[i] = p
+        else:
+            exponent[i] = exponent[j] + 1
+            power[i] = power[j] * p
+        if power[i] == i:
+            f[i] = func(p, exponent[i])
+        else:
+            f[i] = f[i // power[i]] * f[power[i]]
+    return f
 
 def segmentedSieve(left: int, right: int) -> List[bool]:
     """Calculates the primes in the window from left to right
