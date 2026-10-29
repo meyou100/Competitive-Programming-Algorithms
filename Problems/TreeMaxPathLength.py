@@ -9,6 +9,7 @@ def maxPathLength(adj: List[List[int]]) -> List[int]:
     stack = [0]
     parent[0] = -1
 
+    #find the parent of each node and a topological ordering
     while stack:
         x = stack.pop()
         top_order.append(x)
@@ -17,6 +18,7 @@ def maxPathLength(adj: List[List[int]]) -> List[int]:
                 parent[y] = x
                 stack.append(y)
 
+    #calculate max path length when only going down
     max_length = [[0, 0] for _ in range(n)]
     for x in reversed(top_order):
         for y in adj[x]:
@@ -28,6 +30,7 @@ def maxPathLength(adj: List[List[int]]) -> List[int]:
             elif length > max_length[x][1]:
                 max_length[x][1] = length
 
+    #calculate max path length when considering going through the parent
     for x in top_order:
         if parent[x] == -1:
             continue
@@ -41,5 +44,3 @@ def maxPathLength(adj: List[List[int]]) -> List[int]:
             max_length[x][1] = length
 
     return [l[0] for l in max_length]
-
-print(maxPathLength([[], [2], [], []]))
