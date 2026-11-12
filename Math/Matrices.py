@@ -1,14 +1,21 @@
 def matmul(a, b, mod=-1):
     n = len(a)
-    m = 1 if type(b[0]) == int else len(b[0])
+    flag = type(b[0]) == int
+    m = 1 if flag else len(b[0])
     res = [[0] * m for _ in range(n)]
     for i in range(n):
         for j in range(m):
             for k in range(len(a[0])):
                 if mod != -1:
-                    res[i][j] = (a[i][k] * b[k][j] % mod + res[i][j]) % mod
+                    if flag:
+                        res[i][j] = (a[i][k] * b[k] % mod + res[i][j]) % mod
+                    else:
+                        res[i][j] = (a[i][k] * b[k][j] % mod + res[i][j]) % mod
                 else:
-                    res[i][j] += a[i][k] * b[k][j]
+                    if flag:
+                        res[i][j] += a[i][k] * b[k]
+                    else:
+                        res[i][j] += a[i][k] * b[k][j]
     return res
 
 def power(a, k, mod=-1):
